@@ -1,0 +1,16 @@
+[package]
+name = "snake_case"
+version = "0.1.0"
+authors = ["Emil Ernerfeldt <emil.ernerfeldt@gmail.com>"]
+edition = "2018"
+description = "SnakeCase is a String-like type that can only contain valid non-empty snake_case"
+documentation = "https://emilk.github.io/snake_case/snake_case/index.html"
+repository = "https://github.com/emilk/snake_case"
+readme = "README.md"
+keywords = ["snake_case", "string"]
+categories = ["data-structures", "encoding"]
+license = "MIT"
+include = [ "**/*.rs", "Cargo.toml", ]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] } # TODO: optional dependency
