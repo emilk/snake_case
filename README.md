@@ -20,13 +20,12 @@ let id = SnakeCase::from_str("hello_world").unwrap();
 assert_eq!(id, "hello_world");
 ```
 
+There is also `SnakeCaseRef` which is a non-owning reference to a snake_case string.
+
 ## Serde
 If you enable the `"serde"` feature then `SnakeCase` will implement `Serialize` and `Deserialize`.
 
 `Deserialize` will fail if a string is not valid snake case.
-
-
-There is also `SnakeCaseRef` which is a non-owning reference to a snake_case string.
 
 ## Documentation
 https://emilk.github.io/snake_case/snake_case/index.html
