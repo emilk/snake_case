@@ -12,5 +12,8 @@ categories = ["data-structures", "encoding"]
 license = "MIT"
 include = [ "**/*.rs", "Cargo.toml", ]
 
+[features]
+default = []
+
 [dependencies]
-serde = { version = "1", features = ["derive"] } # TODO: optional dependency
+serde = { version = "1", features = ["derive"], optional = true }

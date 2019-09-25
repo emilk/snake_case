@@ -1,5 +1,6 @@
 use std::fmt;
 
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize};
 
 /// Is the given string a non-empty snake_case string?
@@ -26,7 +27,8 @@ pub fn is_snake_case(string: &str) -> bool {
 /// * Non-empty
 /// * Starts with a lower case ASCII letter or underscore
 /// * Contains only lower case ASCII letters, underscores and digits
-#[derive(Clone, Eq, Hash, Ord, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Eq, Hash, Ord, PartialEq, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Serialize))]
 pub struct SnakeCase(String);
 
 /// Only one possible error: the given string was not valid snake_case.
@@ -73,6 +75,7 @@ impl fmt::Display for SnakeCase {
     }
 }
 
+#[cfg(feature = "serde")]
 impl<'de> Deserialize<'de> for SnakeCase {
     fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
     where
