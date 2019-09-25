@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{convert::TryFrom, fmt};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize};
@@ -50,12 +50,36 @@ impl SnakeCase {
         }
     }
 
+    pub fn from_string(s: String) -> Result<SnakeCase, InvalidSnakeCase> {
+        if is_snake_case(&s) {
+            Ok(SnakeCase(s))
+        } else {
+            Err(InvalidSnakeCase)
+        }
+    }
+
     pub fn as_str(&self) -> &str {
         &self.0
     }
 
     pub fn as_ref(&self) -> SnakeCaseRef {
         SnakeCaseRef(&self.0)
+    }
+}
+
+impl TryFrom<&str> for SnakeCase {
+    type Error = InvalidSnakeCase;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        SnakeCase::from_str(s)
+    }
+}
+
+impl TryFrom<String> for SnakeCase {
+    type Error = InvalidSnakeCase;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        SnakeCase::from_string(s)
     }
 }
 
@@ -134,12 +158,20 @@ impl<'a> SnakeCaseRef<'a> {
         }
     }
 
-    pub fn as_str(&self) -> &str {
+    pub fn as_str(&self) -> &'a str {
         self.0
     }
 
     pub fn to_owned(&self) -> SnakeCase {
         SnakeCase(self.0.to_string())
+    }
+}
+
+impl<'a> TryFrom<&'a str> for SnakeCaseRef<'a> {
+    type Error = InvalidSnakeCase;
+
+    fn try_from(s: &'a str) -> Result<Self, Self::Error> {
+        SnakeCaseRef::from_str(s)
     }
 }
 
