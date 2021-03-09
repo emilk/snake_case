@@ -10,7 +10,7 @@ readme = "README.md"
 keywords = ["snake_case", "string"]
 categories = ["data-structures", "encoding"]
 license = "MIT"
-include = [ "**/*.rs", "Cargo.toml", ]
+include = [ "**/*.rs", "Cargo.toml", "LICENSE-MIT"]
 
 [features]
 default = []
