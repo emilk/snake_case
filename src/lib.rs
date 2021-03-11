@@ -7,21 +7,31 @@ use serde::{Deserialize, Deserializer, Serialize};
 
 /// Is the given string a non-empty snake_case string?
 /// In particular, does it match  ^[_a-z][_a-z0-9]*$  ?
-pub fn is_snake_case(string: &str) -> bool {
-    if string.is_empty() {
+pub const fn is_snake_case(string: &str) -> bool {
+    // we only care about ascii chars, which fit in a byte.
+    // iterating over utf8 continuation bytes and the like will not count as valid snake case anyway.
+    let (len, bytes) = (string.len(), string.as_bytes());
+    const fn valid_start(b: u8) -> bool {
+        b == b'_' || b'a' <= b && b <= b'z'
+    };
+    const fn is_snake_case_character(c: u8) -> bool {
+        b'a' <= c && c <= b'z' || b'0' <= c && c <= b'9' || c == b'_'
+    }
+    // non-empty and starts with a..z or _
+    if bytes.is_empty() || !valid_start(bytes[0]) {
         return false;
     }
-
-    fn is_snake_case_character(c: char) -> bool {
-        'a' <= c && c <= 'z' || '0' <= c && c <= '9' || c == '_'
+    //check the rest
+    let mut i = 1; // we already checked the first byte, its fine
+    loop {
+        if i >= len - 1 {
+            break true;
+        }
+        if !is_snake_case_character(bytes[i]) {
+            break false;
+        }
+        i += 1;
     }
-
-    if !string.chars().all(is_snake_case_character) {
-        return false;
-    }
-
-    let first_char = string.chars().next().unwrap();
-    first_char == '_' || 'a' <= first_char && first_char <= 'z'
 }
 
 // ----------------------------------------------------------------------------
@@ -150,7 +160,7 @@ impl std::cmp::PartialEq<String> for SnakeCase {
 pub struct SnakeCaseRef<'a>(&'a str);
 
 impl<'a> SnakeCaseRef<'a> {
-    pub fn from_str(s: &str) -> Result<SnakeCaseRef, InvalidSnakeCase> {
+    pub const fn from_str(s: &str) -> Result<SnakeCaseRef, InvalidSnakeCase> {
         if is_snake_case(s) {
             Ok(SnakeCaseRef(s))
         } else {
@@ -158,7 +168,7 @@ impl<'a> SnakeCaseRef<'a> {
         }
     }
 
-    pub fn as_str(&self) -> &'a str {
+    pub const fn as_str(&self) -> &'a str {
         self.0
     }
 
