@@ -1,5 +1,4 @@
 #![allow(clippy::manual_range_contains)]
-#![allow(clippy::should_implement_trait)] // TODO: rename from_str
 
 use std::{convert::TryFrom, fmt};
 
@@ -55,7 +54,7 @@ pub struct InvalidSnakeCase;
 pub struct SnakeCase(String);
 
 impl SnakeCase {
-    pub fn from_str(s: &str) -> Result<SnakeCase, InvalidSnakeCase> {
+    pub fn try_from_str(s: &str) -> Result<SnakeCase, InvalidSnakeCase> {
         if is_snake_case(s) {
             Ok(SnakeCase(s.to_string()))
         } else {
@@ -63,7 +62,7 @@ impl SnakeCase {
         }
     }
 
-    pub fn from_string(s: String) -> Result<SnakeCase, InvalidSnakeCase> {
+    pub fn try_from_string(s: String) -> Result<SnakeCase, InvalidSnakeCase> {
         if is_snake_case(&s) {
             Ok(SnakeCase(s))
         } else {
@@ -84,7 +83,7 @@ impl TryFrom<&str> for SnakeCase {
     type Error = InvalidSnakeCase;
 
     fn try_from(s: &str) -> Result<Self, Self::Error> {
-        SnakeCase::from_str(s)
+        SnakeCase::try_from_str(s)
     }
 }
 
@@ -92,7 +91,7 @@ impl TryFrom<String> for SnakeCase {
     type Error = InvalidSnakeCase;
 
     fn try_from(s: String) -> Result<Self, Self::Error> {
-        SnakeCase::from_string(s)
+        SnakeCase::try_from_string(s)
     }
 }
 
@@ -121,7 +120,7 @@ impl<'de> Deserialize<'de> for SnakeCase {
         D: Deserializer<'de>,
     {
         let string = String::deserialize(deserializer)?;
-        SnakeCase::from_str(&string).map_err(|_: InvalidSnakeCase| {
+        SnakeCase::try_from_str(&string).map_err(|_: InvalidSnakeCase| {
             serde::de::Error::custom(format!("Expected snake_case, got '{}'", string))
         })
     }
@@ -163,7 +162,7 @@ impl std::cmp::PartialEq<String> for SnakeCase {
 pub struct SnakeCaseRef<'a>(&'a str);
 
 impl<'a> SnakeCaseRef<'a> {
-    pub const fn from_str(s: &str) -> Result<SnakeCaseRef, InvalidSnakeCase> {
+    pub const fn try_from_str(s: &str) -> Result<SnakeCaseRef, InvalidSnakeCase> {
         if is_snake_case(s) {
             Ok(SnakeCaseRef(s))
         } else {
@@ -184,7 +183,7 @@ impl<'a> TryFrom<&'a str> for SnakeCaseRef<'a> {
     type Error = InvalidSnakeCase;
 
     fn try_from(s: &'a str) -> Result<Self, Self::Error> {
-        SnakeCaseRef::from_str(s)
+        SnakeCaseRef::try_from_str(s)
     }
 }
 
@@ -244,33 +243,33 @@ mod tests {
 
     #[test]
     fn snake_case() {
-        assert_eq!(SnakeCase::from_str("_hello42").unwrap(), "_hello42");
+        assert_eq!(SnakeCase::try_from_str("_hello42").unwrap(), "_hello42");
         assert_eq!(
-            SnakeCase::from_str("_hello42").unwrap(),
+            SnakeCase::try_from_str("_hello42").unwrap(),
             "_hello42".to_string()
         );
-        assert_eq!("_hello42", SnakeCase::from_str("_hello42").unwrap());
-        assert!(SnakeCase::from_str("").is_err());
-        assert!(SnakeCase::from_str("42").is_err());
-        assert!(SnakeCase::from_str("_").is_ok());
+        assert_eq!("_hello42", SnakeCase::try_from_str("_hello42").unwrap());
+        assert!(SnakeCase::try_from_str("").is_err());
+        assert!(SnakeCase::try_from_str("42").is_err());
+        assert!(SnakeCase::try_from_str("_").is_ok());
     }
 
     #[test]
     fn snake_case_ref() {
-        assert_eq!(SnakeCaseRef::from_str("_hello42").unwrap(), "_hello42");
+        assert_eq!(SnakeCaseRef::try_from_str("_hello42").unwrap(), "_hello42");
         assert_eq!(
-            SnakeCaseRef::from_str("_hello42").unwrap(),
+            SnakeCaseRef::try_from_str("_hello42").unwrap(),
             "_hello42".to_string()
         );
-        assert_eq!("_hello42", SnakeCaseRef::from_str("_hello42").unwrap());
-        assert!(SnakeCaseRef::from_str("").is_err());
-        assert!(SnakeCaseRef::from_str("42").is_err());
-        assert!(SnakeCaseRef::from_str("_").is_ok());
+        assert_eq!("_hello42", SnakeCaseRef::try_from_str("_hello42").unwrap());
+        assert!(SnakeCaseRef::try_from_str("").is_err());
+        assert!(SnakeCaseRef::try_from_str("42").is_err());
+        assert!(SnakeCaseRef::try_from_str("_").is_ok());
     }
 
     #[test]
     fn snake_case_conversions() {
-        let sc = SnakeCase::from_str("hello_world").unwrap();
+        let sc = SnakeCase::try_from_str("hello_world").unwrap();
         let scr: SnakeCaseRef = sc.as_ref();
         assert_eq!(scr, "hello_world");
         let sc2: SnakeCase = scr.to_owned();
@@ -278,7 +277,7 @@ mod tests {
 
         use std::collections::HashSet;
         let mut set: HashSet<SnakeCase> = HashSet::new();
-        set.insert(SnakeCase::from_str("hello_world").unwrap());
-        assert!(set.contains(SnakeCaseRef::from_str("hello_world").unwrap().as_str()));
+        set.insert(SnakeCase::try_from_str("hello_world").unwrap());
+        assert!(set.contains(SnakeCaseRef::try_from_str("hello_world").unwrap().as_str()));
     }
 }
