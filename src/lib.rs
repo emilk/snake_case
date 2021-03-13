@@ -1,3 +1,6 @@
+#![allow(clippy::manual_range_contains)]
+#![allow(clippy::should_implement_trait)] // TODO: rename from_str
+
 use std::{convert::TryFrom, fmt};
 
 #[cfg(feature = "serde")]
