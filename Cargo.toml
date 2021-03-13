@@ -1,6 +1,6 @@
 [package]
 name = "snake_case"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Emil Ernerfeldt <emil.ernerfeldt@gmail.com>"]
 edition = "2018"
 description = "SnakeCase is a String-like type that can only contain valid non-empty snake_case"
