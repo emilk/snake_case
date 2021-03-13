@@ -1,4 +1,11 @@
 # `snake_case`
+
+[![Latest version](https://img.shields.io/crates/v/snake_case.svg)](https://crates.io/crates/snake_case)
+[![Documentation](https://docs.rs/snake_case/badge.svg)](https://docs.rs/snake_case)
+[![Build Status](https://github.com/emilk/snake_case/workflows/CI/badge.svg)](https://github.com/emilk/snake_case/actions?workflow=CI)
+![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+
+
 ## A Rust crate for working with `snake_case` identifiers
 
 The purpose of this crate is to expose the type `SnakeCase`, a wrapper around a `String` that can only contain valid, non-empty snake_case without leading digits. In other words, it always matches `^[_a-z][_a-z0-9]*$`
@@ -16,7 +23,7 @@ The common case for this is unique identifiers, for which snake case is perfectl
 
 ## Basic usage
 ``` rust
-let id = SnakeCase::from_str("hello_world").unwrap();
+let id = SnakeCase::try_from_str("hello_world").unwrap();
 assert_eq!(id, "hello_world");
 ```
 
@@ -26,6 +33,3 @@ There is also `SnakeCaseRef` which is a non-owning reference to a snake_case str
 If you enable the `"serde"` feature then `SnakeCase` will implement `Serialize` and `Deserialize`.
 
 `Deserialize` will fail if a string is not valid snake case.
-
-## Documentation
-https://emilk.github.io/snake_case/snake_case/index.html
