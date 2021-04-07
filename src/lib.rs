@@ -179,6 +179,24 @@ impl<'a> SnakeCaseRef<'a> {
     }
 }
 
+#[cfg(feature = "const_literals")]
+/// an unsafe constructor for SnakeCaseRef. caller has to make sure the input is in fact valid.
+pub const unsafe fn from_str_unchecked(s: &str) -> SnakeCaseRef {
+    SnakeCaseRef(s)
+}
+#[cfg(feature = "const_literals")]
+/// this will construct a SnakeCafeRef with compile-time validation for string literals.
+#[macro_export]
+macro_rules! scr_lit {
+    ($s:expr) => {{
+        struct Valid<const B: bool>;
+        let _valid: Valid<true> = Valid::<{ snake_case::is_snake_case($s) }>;
+        unsafe { // this is perfectly safe, wouldnt even compile otherwise.
+            snake_case::from_str_unchecked($s)
+        }
+    }};
+}
+
 impl<'a> TryFrom<&'a str> for SnakeCaseRef<'a> {
     type Error = InvalidSnakeCase;
 
