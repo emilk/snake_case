@@ -15,7 +15,7 @@ pub const fn is_snake_case(string: &str) -> bool {
     let (len, bytes) = (string.len(), string.as_bytes());
     const fn valid_start(b: u8) -> bool {
         b == b'_' || b'a' <= b && b <= b'z'
-    };
+    }
     const fn is_snake_case_character(c: u8) -> bool {
         b'a' <= c && c <= b'z' || b'0' <= c && c <= b'9' || c == b'_'
     }
@@ -191,7 +191,8 @@ macro_rules! scr_lit {
     ($s:expr) => {{
         struct Valid<const B: bool>;
         let _valid: Valid<true> = Valid::<{ snake_case::is_snake_case($s) }>;
-        unsafe { // this is perfectly safe, wouldnt even compile otherwise.
+        unsafe {
+            // this is perfectly safe, wouldnt even compile otherwise.
             snake_case::from_str_unchecked($s)
         }
     }};
