@@ -188,7 +188,7 @@ pub const unsafe fn from_str_unchecked(s: &str) -> SnakeCaseRef {
 /// this will construct a SnakeCafeRef<'static> with compile-time validation for string literals.
 ///
 /// ```
-/// use snake_case::snake_case;
+/// use snake_case::snake_case_lit;
 /// let snake_case = snake_case_lit!("my_little_snake");
 /// // let bad_snake =  snake_case_lit!("Python"); <- this wont compile
 /// ```
