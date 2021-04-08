@@ -15,7 +15,7 @@ pub const fn is_snake_case(string: &str) -> bool {
     let (len, bytes) = (string.len(), string.as_bytes());
     const fn valid_start(b: u8) -> bool {
         b == b'_' || b'a' <= b && b <= b'z'
-    };
+    }
     const fn is_snake_case_character(c: u8) -> bool {
         b'a' <= c && c <= b'z' || b'0' <= c && c <= b'9' || c == b'_'
     }
@@ -177,6 +177,31 @@ impl<'a> SnakeCaseRef<'a> {
     pub fn to_owned(&self) -> SnakeCase {
         SnakeCase(self.0.to_string())
     }
+}
+
+#[cfg(feature = "const_literals")]
+/// an unsafe constructor for SnakeCaseRef. caller has to make sure the input is in fact valid.
+pub const unsafe fn from_str_unchecked(s: &str) -> SnakeCaseRef {
+    SnakeCaseRef(s)
+}
+#[cfg(feature = "const_literals")]
+/// this will construct a SnakeCafeRef<'static> with compile-time validation for string literals.
+///
+/// ```
+/// use snake_case::snake_case_lit;
+/// let snake_case = snake_case_lit!("my_little_snake");
+/// // let bad_snake =  snake_case_lit!("Python"); <- this wont compile
+/// ```
+#[macro_export]
+macro_rules! snake_case_lit {
+    ($s:expr) => {{
+        struct Valid<const B: bool>;
+        let _valid: Valid<true> = Valid::<{ snake_case::is_snake_case($s) }>;
+        unsafe {
+            // this is perfectly safe, wouldnt even compile otherwise.
+            snake_case::from_str_unchecked($s)
+        }
+    }};
 }
 
 impl<'a> TryFrom<&'a str> for SnakeCaseRef<'a> {
