@@ -185,9 +185,15 @@ pub const unsafe fn from_str_unchecked(s: &str) -> SnakeCaseRef {
     SnakeCaseRef(s)
 }
 #[cfg(feature = "const_literals")]
-/// this will construct a SnakeCafeRef with compile-time validation for string literals.
+/// this will construct a SnakeCafeRef<'static> with compile-time validation for string literals.
+///
+/// ```
+/// use snake_case::snake_case;
+/// let snake_case = snake_case_lit!("my_little_snake");
+/// // let bad_snake =  snake_case_lit!("Python"); <- this wont compile
+/// ```
 #[macro_export]
-macro_rules! scr_lit {
+macro_rules! snake_case_lit {
     ($s:expr) => {{
         struct Valid<const B: bool>;
         let _valid: Valid<true> = Valid::<{ snake_case::is_snake_case($s) }>;
